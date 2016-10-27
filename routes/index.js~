@@ -1,0 +1,61 @@
+var express = require('express');
+var elasticsearch = require('elasticsearch');
+var app= express();
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res) {
+	
+	/*request({
+    url: 'http://search-tweetsearch-octmetcnxuimyajaftfaqyrq4i.us-west-2.es.amazonaws.com/tweets/_search', //URL to hit
+    qs: {q: 'trump'}, //Query string data
+    method: 'GET', //Specify the method
+
+}, function(error, response, body){
+    if(error) {
+        console.log(error);
+    } else {
+        res.render('index',tweets:{body});
+    }
+});*/  
+var client = new elasticsearch.Client({
+  host: 'http://search-tweetsearch-octmetcnxuimyajaftfaqyrq4i.us-west-2.es.amazonaws.com/'
+});
+  client.search({
+  	index: 'tweets',
+  q: 'hillary'
+}).then(function (body) {
+	tweets=body;
+  res.render('index',{tweets:body});
+}, function (error) {
+  console.trace(error.message);
+});
+});
+
+
+//Lets configure and request
+
+router.get('/coord', function(req, res) {
+	var results=[]	
+	var result={
+		
+		lat:74.0329,
+		lng:40.6262	
+	}
+	results.push(result)
+	result={
+		
+		lat:40.6262,
+		lng:74.0329	
+	}
+	results.push(result)
+	 
+	result={
+		
+		lat:37.762967,
+		lng:-122.415183
+	}
+	results.push(result)
+  res.send(results);
+});
+module.exports = router;
